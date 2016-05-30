@@ -134,7 +134,11 @@ function GstLaunch() {
 	var spawnPipeline = function(pipeline) {
 		Assert.ok(typeof(pipeline), 'string');
 		Assert.ok(isAvailable(), "gst-launch is not available.");
-		return Spawn(gst_launch_executable, pipeline.split(' '));
+		
+		var gst_launch_path = getPath();
+		Assert.ok(typeof(gst_launch_path), 'string');
+			
+		return Spawn(gst_launch_path, pipeline.split(' '));
 	}
 	
 	return {
