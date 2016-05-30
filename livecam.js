@@ -301,3 +301,5 @@ function LiveCam(config) {
 	}
 	
 }
+
+module.exports = LiveCam;
