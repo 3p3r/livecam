@@ -10,6 +10,73 @@ function GstLaunch() {
 	const SpawnSync = require('child_process').spawnSync;
 	const Spawn = require('child_process').spawn;
 	const Assert = require('assert');
+	const Path = require('path');
+	const OS = require('os');
+	const FS = require('fs');
+	
+	/*!
+	 * @fn getPath
+	 * @brief Returns path to gst-launch or undefined on error
+	 */
+	var getPath = function() {
+		var detected_path = undefined;
+		
+		if (OS.platform() == 'win32') {
+			// On Windows, GStreamer MSI installer defines the following
+			// environment variables.
+			const detected_path_x64 = process.env.GSTREAMER_1_0_ROOT_X86_64;
+			const detected_path_x32 = process.env.GSTREAMER_1_0_ROOT_X86;
+			if (detected_path_x64 || detected_path_x32) {
+				// If both variables are present, favor the architecture
+				// of GStreamer which is the same as Node.js runtime.
+				if (detected_path_x64 && detected_path_x32) {
+					if (process.arch == 'x64')
+						detected_path = detected_path_x64;
+					else if (process.arch == 'x32')
+						detected_path = detected_path_x32;
+				} else {
+					detected_path = detected_path_x64 || detected_path_x32;
+				}
+			}
+			
+			if (detected_path) {
+				detected_path = Path.join(
+					detected_path,
+					'bin',
+					(gst_launch_executable + '.exe'));
+				try { FS.accessSync(detected_path, FS.F_OK); }
+				catch (e) { detected_path = undefined; }
+			} else {
+				// Look for GStreamer on PATH
+				var path_dirs = process.env.PATH.split(';');
+				for (var index = 0; index < path_dirs.length; ++index) {
+					try {
+						var base = Path.normalize(path_dirs[index]);
+						var bin = Path.join(
+							base,
+							(gst_launch_executable + '.exe'));
+						FS.accessSync(bin, FS.F_OK);
+						detected_path = bin;
+					} catch (e) { /* no-op */ }
+				}
+			}
+		} else if (OS.platform() == 'linux') {
+			// Look for GStreamer on PATH
+			var path_dirs = process.env.PATH.split(':');
+			for (var index = 0; index < path_dirs.length; ++index) {
+				try {
+					var base = Path.normalize(path_dirs[index]);
+					var bin = Path.join(
+						base,
+						gst_launch_executable);
+					FS.accessSync(bin, FS.F_OK);
+					detected_path = bin;
+				} catch (e) { /* no-op */ }
+			}
+		}
+		
+		return detected_path;
+	}
 	
 	/*!
 	 * @fn getVersion
@@ -19,8 +86,11 @@ function GstLaunch() {
 	var getVersion = function() {
 		try
 		{
+			var gst_launch_path = getPath();
+			Assert.ok(typeof(gst_launch_path), 'string');
+			
 			var output = SpawnSync(
-					gst_launch_executable,
+					gst_launch_path,
 					[gst_launch_versionarg],
 					{ 'timeout' : 1000 })
 				.stdout;
@@ -68,6 +138,7 @@ function GstLaunch() {
 	}
 	
 	return {
+		'getPath' : getPath,
 		'getVersion' : getVersion,
 		'isAvailable' : isAvailable,
 		'spawnPipeline' : spawnPipeline
