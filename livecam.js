@@ -164,7 +164,7 @@ function GstLiveCamServer() {
 	else if (OS.platform() == 'linux')
 		gst_video_src = 'v4l2src';
 	else
-		gst_video_src = 'testvideosrc';
+		gst_video_src = 'videotestsrc';
 	
 	/*!
 	 * @fn start
