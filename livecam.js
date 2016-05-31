@@ -148,7 +148,7 @@ function GstLaunch() {
  * @class GstLiveCamServer
  * @brief Encapsulates a GStreamer pipeline to broadcast default webcam.
  */
-function GstLiveCamServer() {
+function GstLiveCamServer(config) {
 	
 	const Assert = require('assert');
 	const OS = require('os');
@@ -156,15 +156,46 @@ function GstLiveCamServer() {
 	Assert.ok(OS.platform() == 'win32' || OS.platform() == 'linux',
 	"livecam module supports Windows and Linux for broadcasting.");
 	
+	config = config || {};
+	Assert.ok(typeof(config), 'object');
+	
+	const fake = config.fake || false;
+	const width = config.width || 0;
+	const height = config.height || 0;
+	const framerate = config.framerate || 0;
+	const grayscale = config.grayscale || false;
+	
+	Assert.ok(typeof(fake), 'boolean');
+	Assert.ok(typeof(width), 'number');
+	Assert.ok(typeof(height), 'number');
+	Assert.ok(typeof(framerate), 'number');
+	Assert.ok(typeof(grayscale), 'boolean');
+	
 	var gst_multipart_boundary = '--videoboundary';
 	var gst_video_src = '';
 	
-	if (OS.platform() == 'win32')
-		gst_video_src = 'ksvideosrc';
-	else if (OS.platform() == 'linux')
-		gst_video_src = 'v4l2src';
-	else
+	if (!fake) {
+		if (OS.platform() == 'win32')
+			gst_video_src = 'ksvideosrc ! decodebin';
+		else if (OS.platform() == 'linux')
+			gst_video_src = 'v4l2src ! decodebin';
+		else
+			gst_video_src = 'videotestsrc';
+	} else {
 		gst_video_src = 'videotestsrc';
+	}
+	
+	if (width > 0 || height > 0) {
+		gst_video_src += ' ! videoscale ! video/x-raw,width=' + parseInt(width) + ',height=' + parseInt(height);
+	}
+	
+	if (framerate > 0) {
+		gst_video_src += ' ! videorate ! video/x-raw,framerate=' + parseInt(framerate) + '/1';
+	}
+	
+	if (grayscale) {
+		gst_video_src += ' ! videobalance saturation=0.0 ! videoconvert';
+	}
 	
 	/*!
 	 * @fn start
@@ -176,7 +207,7 @@ function GstLiveCamServer() {
 		Assert.ok(typeof(tcp_addr), 'string');
 		Assert.ok(typeof(tcp_port), 'number');
 		
-		const cam_pipeline = gst_video_src + ' ! decodebin ! jpegenc ! multipartmux  boundary="'
+		const cam_pipeline = gst_video_src + ' ! jpegenc ! multipartmux  boundary="'
 		+ gst_multipart_boundary + '" ! tcpserversink host=' + tcp_addr + ' port=' + tcp_port;
 		
 		var gst_launch = new GstLaunch();
@@ -368,14 +399,16 @@ function LiveCam(config) {
 	const broadcast_addr = config.broadcast_addr || "127.0.0.1";
 	const broadcast_port = config.broadcast_port || 12000;
 	const start = config.start;
+	const webcam = config.webcam || {};
 	
 	if (start) Assert.ok(typeof(start), 'function');
-	if (broadcast_port) Assert.ok(typeof(port), 'number');
-	if (broadcast_addr) Assert.ok(typeof(port), 'string');
-	if (ui_port) Assert.ok(typeof(port), 'number');
-	if (ui_addr) Assert.ok(typeof(port), 'string');
-	if (gst_tcp_port) Assert.ok(typeof(port), 'number');
-	if (gst_tcp_addr) Assert.ok(typeof(port), 'string');
+	if (broadcast_port) Assert.ok(typeof(broadcast_port), 'number');
+	if (broadcast_addr) Assert.ok(typeof(broadcast_addr), 'string');
+	if (ui_port) Assert.ok(typeof(ui_port), 'number');
+	if (ui_addr) Assert.ok(typeof(ui_addr), 'string');
+	if (gst_tcp_port) Assert.ok(typeof(gst_tcp_port), 'number');
+	if (gst_tcp_addr) Assert.ok(typeof(gst_tcp_addr), 'string');
+	if (webcam) Assert.ok(typeof(webcam), 'object');
 	
 	if (!(new GstLaunch()).isAvailable())
 	{
@@ -400,7 +433,7 @@ function LiveCam(config) {
 	var broadcast = function() {
 		var gst_cam_ui = new LiveCamUI();
 		var gst_cam_wrap = new SocketCamWrapper();
-		var gst_cam_server = new GstLiveCamServer();
+		var gst_cam_server = new GstLiveCamServer(webcam);
 		var gst_cam_process = gst_cam_server.start(gst_tcp_addr, gst_tcp_port);
 		
 		gst_cam_process.stdout.on('data', function(data) {
