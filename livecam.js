@@ -293,7 +293,7 @@ function LiveCamUI() {
 				var socket = io.connect('http://' + webcam_addr + ':' + webcam_port);
 				
 				socket.on('image', function (data) {
-					webcam_host.attr("src", "data:image/jpeg;base64," + data.toString("base64") );
+					webcam_host.attr("src", "data:image/jpeg;base64," + data );
 				});
 			</script>
 		</body>
