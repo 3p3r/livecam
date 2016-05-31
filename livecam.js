@@ -377,6 +377,17 @@ function LiveCam(config) {
 	if (gst_tcp_port) Assert.ok(typeof(port), 'number');
 	if (gst_tcp_addr) Assert.ok(typeof(port), 'string');
 	
+	if (!(new GstLaunch()).isAvailable())
+	{
+		console.log("==================================================");
+		console.log("Unable to locate gst-launch executable.");
+		console.log("Look at https://github.com/sepehr-laal/livecam");
+		console.log("You are most likely missing the GStreamer runtime.");
+		console.log("==================================================");
+		
+		throw new Error('Unable to broadcast.');
+	}
+	
 	var broadcast = function() {
 		var gst_cam_ui = new LiveCamUI();
 		var gst_cam_wrap = new SocketCamWrapper();
