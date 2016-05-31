@@ -2,7 +2,6 @@
   "name": "livecam",
   "version": "1.0.0",
   "description": "Webcam live-streaming solution using GStreamer and Node.js",
-  "private": true,
   "license": "LGPL-3.0",
   "main": "livecam.js",
   "dependencies": {
