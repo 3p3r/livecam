@@ -365,8 +365,8 @@ function LiveCam(config) {
 	const gst_tcp_port = config.gst_port || 10000;
 	const ui_addr = config.ui_addr || "127.0.0.1";
 	const ui_port = config.ui_port || 11000;
-	const broadcast_addr = config.address || "127.0.0.1";
-	const broadcast_port = config.port || 12000;
+	const broadcast_addr = config.broadcast_addr || "127.0.0.1";
+	const broadcast_port = config.broadcast_port || 12000;
 	const start = config.start;
 	
 	if (start) Assert.ok(typeof(start), 'function');
