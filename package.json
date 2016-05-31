@@ -16,5 +16,4 @@
     "url": "https://github.com/sepehr-laal/livecam/issues"
   },
   "homepage": "https://github.com/sepehr-laal/livecam",
-  "scripts": {"start": "node broadcast.js"}
 }
