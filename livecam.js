@@ -347,9 +347,9 @@ function LiveCamUI() {
  *    [optional] [default: 127.0.0.1]
  * config.ui_port --> where minimal UI port is
  *    [optional] [default: 11000]
- * config.address --> where Socket IO host is (browser-visible)
+ * config.broadcast_addr --> where Socket IO host is (browser-visible)
  *    [optional] [default: 127.0.0.1]
- * config.port --> where Socket IO port is (browser-visible)
+ * config.broadcast_port --> where Socket IO port is (browser-visible)
  *    [optional] [default: 12000]
  * config.start --> event emitted when streaming is started
  *    [optional] [default: null]
@@ -365,13 +365,13 @@ function LiveCam(config) {
 	const gst_tcp_port = config.gst_port || 10000;
 	const ui_addr = config.ui_addr || "127.0.0.1";
 	const ui_port = config.ui_port || 11000;
-	const address = config.address || "127.0.0.1";
-	const port = config.port || 12000;
+	const broadcast_addr = config.address || "127.0.0.1";
+	const broadcast_port = config.port || 12000;
 	const start = config.start;
 	
 	if (start) Assert.ok(typeof(start), 'function');
-	if (port) Assert.ok(typeof(port), 'number');
-	if (address) Assert.ok(typeof(port), 'string');
+	if (broadcast_port) Assert.ok(typeof(port), 'number');
+	if (broadcast_addr) Assert.ok(typeof(port), 'string');
 	if (ui_port) Assert.ok(typeof(port), 'number');
 	if (ui_addr) Assert.ok(typeof(port), 'string');
 	if (gst_tcp_port) Assert.ok(typeof(port), 'number');
@@ -388,6 +388,15 @@ function LiveCam(config) {
 		throw new Error('Unable to broadcast.');
 	}
 	
+	console.log("LiveCam parameters:", {
+		'broadcast_addr' : broadcast_addr,
+		'broadcast_port' : broadcast_port,
+		'ui_addr' : ui_addr,
+		'ui_port' : ui_port,
+		'gst_tcp_addr' : gst_tcp_addr,
+		'gst_tcp_port' : gst_tcp_port
+	});
+	
 	var broadcast = function() {
 		var gst_cam_ui = new LiveCamUI();
 		var gst_cam_wrap = new SocketCamWrapper();
@@ -398,8 +407,8 @@ function LiveCam(config) {
 			console.log(data.toString());
 			// This catches GStreamer when pipeline goes into PLAYING state
 			if(data.toString().includes('Setting pipeline to PLAYING') > 0) {
-				gst_cam_wrap.wrap(gst_tcp_addr, gst_tcp_port, address, port);
-				gst_cam_ui.serve(ui_addr, ui_port, address, port);
+				gst_cam_wrap.wrap(gst_tcp_addr, gst_tcp_port, broadcast_addr, broadcast_port);
+				gst_cam_ui.serve(ui_addr, ui_port, broadcast_addr, broadcast_port);
 				gst_cam_ui.close();
 				
 				if (start) start();
