@@ -61,6 +61,29 @@ const webcam_server = new LiveCam
 	// callback function called when server starts
 	'start' : function() {
 		console.log('WebCam server started!');
+	},
+	
+	// webcam object holds configuration of webcam frames
+	'webcam' : {
+		
+		// should frames be converted to grayscale (default : false)
+		'grayscale' : true,
+		
+		// should width of the frame be resized (default : 0)
+		// provide 0 to match webcam input
+		'width' : 800,
+
+		// should height of the frame be resized (default : 0)
+		// provide 0 to match webcam input
+		'height' : 600,
+		
+		// should a fake source be used instead of an actual webcam
+		// suitable for debugging and development (default : false)
+		'fake' : false,
+		
+		// framerate of the feed (default : 0)
+		// provide 0 to match webcam input
+		'framerate' : 25
 	}
 });
 ```
