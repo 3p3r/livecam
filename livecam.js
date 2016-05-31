@@ -351,6 +351,8 @@ function LiveCamUI() {
  *    [optional] [default: 127.0.0.1]
  * config.port --> where Socket IO port is (browser-visible)
  *    [optional] [default: 12000]
+ * config.start --> event emitted when streaming is started
+ *    [optional] [default: null]
  */
 function LiveCam(config) {
 	
@@ -365,6 +367,15 @@ function LiveCam(config) {
 	const ui_port = config.ui_port || 11000;
 	const address = config.address || "127.0.0.1";
 	const port = config.port || 12000;
+	const start = config.start;
+	
+	if (start) Assert.ok(typeof(start), 'function');
+	if (port) Assert.ok(typeof(port), 'number');
+	if (address) Assert.ok(typeof(port), 'string');
+	if (ui_port) Assert.ok(typeof(port), 'number');
+	if (ui_addr) Assert.ok(typeof(port), 'string');
+	if (gst_tcp_port) Assert.ok(typeof(port), 'number');
+	if (gst_tcp_addr) Assert.ok(typeof(port), 'string');
 	
 	var broadcast = function() {
 		var gst_cam_ui = new LiveCamUI();
@@ -379,6 +390,8 @@ function LiveCam(config) {
 				gst_cam_wrap.wrap(gst_tcp_addr, gst_tcp_port, address, port);
 				gst_cam_ui.serve(ui_addr, ui_port, address, port);
 				gst_cam_ui.close();
+				
+				if (start) start();
 			}
 		});
 
