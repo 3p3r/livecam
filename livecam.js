@@ -179,7 +179,17 @@ function GstLiveCamServer() {
 		const cam_pipeline = gst_video_src + ' ! decodebin ! jpegenc ! multipartmux  boundary="'
 		+ gst_multipart_boundary + '" ! tcpserversink host=' + tcp_addr + ' port=' + tcp_port;
 		
-		return (new GstLaunch()).spawnPipeline(cam_pipeline);
+		var gst_launch = new GstLaunch();
+		
+		if (gst_launch.isAvailable()) {
+			console.log('GstLaunch found: ' + gst_launch.getPath());
+			console.log('GStreamer version: ' + gst_launch.getVersion());
+			console.log('GStreamer pipeline: ' + cam_pipeline);
+			
+			return gst_launch.spawnPipeline(cam_pipeline);
+		} else {
+			throw new Error('GstLaunch not found.');
+		}
 	}
 	
 	return {
