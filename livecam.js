@@ -300,25 +300,37 @@ function LiveCamUI() {
 	</html>
 	*/}).toString().match(/\/\*\s*([\s\S]*?)\s*\*\//m)[1];
 	
+	var server = undefined;
+	
 	var serve = function(ui_addr, ui_port, webcam_addr, webcam_port) {
 		Assert.ok(typeof(ui_addr), 'object');
 		Assert.ok(typeof(ui_port), 'number');
 		Assert.ok(typeof(webcam_addr), 'object');
 		Assert.ok(typeof(webcam_port), 'number');
 		
-		Http.createServer(function(request, response) {
+		close();
+		server = Http.createServer(function(request, response) {
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.write(template
 				.replace('@WEBCAM_ADDR@', webcam_addr)
 				.replace('@WEBCAM_PORT@', webcam_port));
 			response.end();
-		}).listen(ui_port, ui_addr);
+		});
+		server.listen(ui_port, ui_addr);
 		
 		console.log('Open http://' + ui_addr + ':' + ui_port + '/ in your browser!');
 	}
 	
+	var close = function() {
+		if (server) {
+			server.close();
+			server = undefined;
+		}
+	}
+	
 	return {
-		'serve' : serve
+		'serve' : serve,
+		'close' : close
 	}
 	
 }
@@ -355,25 +367,24 @@ function LiveCam(config) {
 	const port = config.port || 12000;
 	
 	var broadcast = function() {
+		var gst_cam_ui = new LiveCamUI();
+		var gst_cam_wrap = new SocketCamWrapper();
 		var gst_cam_server = new GstLiveCamServer();
 		var gst_cam_process = gst_cam_server.start(gst_tcp_addr, gst_tcp_port);
 		
 		gst_cam_process.stdout.on('data', function(data) {
 			console.log(data.toString());
-			
+			// This catches GStreamer when pipeline goes into PLAYING state
 			if(data.toString().includes('Setting pipeline to PLAYING') > 0) {
-				(new SocketCamWrapper()).wrap(
-					gst_tcp_addr,
-					gst_tcp_port,
-					address, port);
-				
-				(new LiveCamUI()).serve(ui_addr, ui_port, address, port);
+				gst_cam_wrap.wrap(gst_tcp_addr, gst_tcp_port, address, port);
+				gst_cam_ui.serve(ui_addr, ui_port, address, port);
+				gst_cam_ui.close();
 			}
 		});
 
-		gst_cam_process.stderr.on('data', function(data) { console.log(data.toString()); });
-		gst_cam_process.on('error', function(err) { console.log("Webcam server error: " + err); });
-		gst_cam_process.on('exit', function(code) { console.log("Webcam server exited: " + code); });
+		gst_cam_process.stderr.on('data', function(data) { console.log(data.toString()); gst_cam_ui.close(); });
+		gst_cam_process.on('error', function(err) { console.log("Webcam server error: " + err); gst_cam_ui.close(); });
+		gst_cam_process.on('exit', function(code) { console.log("Webcam server exited: " + code); gst_cam_ui.close(); });
 	}
 	
 	return {
