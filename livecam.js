@@ -274,24 +274,25 @@ function LiveCamUI() {
 	const Http = require('http');
 	const Assert = require('assert');
 	const template = (function(){/*
-	<html>
+	<!doctype html>
+	<html lang="en">
 		<head>
-			<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-			<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+			<meta charset="utf-8">
+			<title>livecam UI</title>
+			<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+			<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+			<style type="text/css">body{width:100%;height:100%} #video{display:block;width:100%;height:100%;}</style>
 		</head>
-
-		<body style="width:100%; height:100%;">
-			<img id="video" style="display:block; width:100%; height:100%;" src="" />
+		<body>
+			<img id="video" src="" />
 			<script>
 				var webcam_addr = "@WEBCAM_ADDR@";
 				var webcam_port = "@WEBCAM_PORT@";
 				var webcam_host = $("#video");
-				
 				var socket = io.connect('http://' + webcam_addr + ':' + webcam_port);
 				
-				socket.on('image', function (data)
-				{
+				socket.on('image', function (data) {
 					webcam_host.attr("src", "data:image/jpeg;base64," + data.toString("base64") );
 				});
 			</script>
