@@ -84,8 +84,8 @@ function GstLaunch() {
 	 * invoking the gst-launch executable or 'undefined' on failure.
 	 */
 	var getVersion = function() {
-		try
-		{
+		var version_str = undefined;
+		try {
 			var gst_launch_path = getPath();
 			Assert.ok(typeof(gst_launch_path), 'string');
 			
@@ -95,29 +95,23 @@ function GstLaunch() {
 					{ 'timeout' : 1000 })
 				.stdout;
 			
-			if (output && output.toString().includes('GStreamer'))
-			{
-				return output
+			if (output && output.toString().includes('GStreamer')) {
+				version_str = output
 					.toString()
 					.match(/GStreamer\s+.+/g)[0]
 					.replace(/GStreamer\s+/,'');
 			}
-			else
-			{
-				console.log('Unable to execute gst-launch.');
-				return undefined;
-			}
 		}
-		catch(ex)
-		{
-			console.log('Failed to spawn gst-launch: ' + ex);
-			return undefined;
+		catch(ex) {
+			version_str = undefined;
 		}
+		
+		return version_str;
 	}
 	
 	/*!
 	 * @fn isAvailable
-	 * @brief Answers true if gst-launch is available on PATH
+	 * @brief Answers true if gst-launch executable is available
 	 */
 	var isAvailable = function() {
 		return getVersion() != undefined;
