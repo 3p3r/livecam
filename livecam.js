@@ -282,14 +282,14 @@ function LiveCamUI() {
 			<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 			<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-			<style type="text/css">body{width:100%;height:100%} #video{display:block;width:100%;height:100%;}</style>
+			<style type="text/css">html,body,.feed,.feed img{width:100%;height:100%;overflow:hidden;}</style>
 		</head>
 		<body>
-			<img id="video" src="" />
+			<div class="feed"><img id="video" src="" /></div>
 			<script>
 				var webcam_addr = "@WEBCAM_ADDR@";
 				var webcam_port = "@WEBCAM_PORT@";
-				var webcam_host = $("#video");
+				var webcam_host = $(".feed img");
 				var socket = io.connect('http://' + webcam_addr + ':' + webcam_port);
 				
 				socket.on('image', function (data) {
