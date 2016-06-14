@@ -8,7 +8,9 @@ You also need **GStreamer 1.3+** runtime installed on your machine.
 ### windows
 depending on your architecture, you may [download the latest runtimes provided and maintained by the GStreamer project](https://gstreamer.freedesktop.org/data/pkg/windows/). They usually come in MSI installer format. You do not need the development installers. Naming of the runtime package follows the `gstreamer-1.0-<arch>-<version>.msi` convention.
 
-After installation, make sure you have `GSTREAMER_1_0_ROOT_<arch>` environment variable defined in your system. This is a variable created by the MSI installer, pointing to where you installed the runtime package.
+**Make sure you select COMPLETE installation and NOT typical.** If you go with typical, `ksvideosrc` plugin will not be available for you, and *livecam* will not be able to use it.
+
+After installation, make sure you have `GSTREAMER_1_0_ROOT_<arch>` environment variable defined in your system. This is a variable created by the MSI installer, pointing to where you installed the runtime package. You might need to restart your computer after installation for this variable to show up.
 
 ### linux
 GStreamer might be already available on your machine. You may verify its existence by typing `gst-launch-1.0 --version` on your command line. If this command is not available, you can obtain GStreamer from your distro's package manager.
