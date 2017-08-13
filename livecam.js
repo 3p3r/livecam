@@ -189,6 +189,8 @@ function GstLiveCamServer(config) {
 			gst_video_src = 'v4l2src ! decodebin';
 		else if (OS.platform() == 'darwin')
 			gst_video_src = 'avfvideosrc';
+			if(config.deviceIndex)
+				gst_video_src += ' device-index=' + config.deviceIndex;
 		else
 			gst_video_src = 'videotestsrc';
 	} else {

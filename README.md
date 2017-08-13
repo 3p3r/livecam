@@ -88,7 +88,10 @@ const webcam_server = new LiveCam
 		
 		// framerate of the feed (default : 0)
 		// provide 0 to match webcam input
-		'framerate' : 25
+		'framerate' : 25,
+
+		// macos only: select the webcam via index
+		'deviceIndex' : 1
 	}
 });
 ```
