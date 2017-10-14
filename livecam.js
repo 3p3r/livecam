@@ -60,7 +60,7 @@ function GstLaunch() {
 					} catch (e) { /* no-op */ }
 				}
 			}
-		} else if (OS.platform() == 'linux') {
+		} else if (OS.platform() == 'linux' || OS.platform() == 'darwin' ) {
 			// Look for GStreamer on PATH
 			var path_dirs = process.env.PATH.split(':');
 			for (var index = 0; index < path_dirs.length; ++index) {
@@ -153,7 +153,7 @@ function GstLiveCamServer(config) {
 	const Assert = require('assert');
 	const OS = require('os');
 	
-	Assert.ok(OS.platform() == 'win32' || OS.platform() == 'linux',
+	Assert.ok(OS.platform() == 'win32' || OS.platform() == 'linux' || OS.platform() == 'darwin',
 	"livecam module supports Windows and Linux for broadcasting.");
 	
 	config = config || {};
@@ -177,8 +177,8 @@ function GstLiveCamServer(config) {
 	if (!fake) {
 		if (OS.platform() == 'win32')
 			gst_video_src = 'ksvideosrc ! decodebin';
-		else if (OS.platform() == 'linux')
-			gst_video_src = 'v4l2src ! decodebin';
+		else if (OS.platform() == 'linux' || OS.platform() == 'darwin')
+			gst_video_src = 'wrappercamerabinsrc mode=2  ! video/x-raw ! decodebin';
 		else
 			gst_video_src = 'videotestsrc';
 	} else {
