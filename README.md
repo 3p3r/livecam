@@ -1,28 +1,35 @@
 # livecam
+
 Webcam live-streaming solution using GStreamer and Node.js
 
-## installation
+## Installation
+
 To obtain this module, type in `npm install livecam`.
 You also need **GStreamer 1.3+** runtime installed on your machine.
 
-### windows
+### Windows
+
 Depending on your architecture, you may [download the latest runtimes provided and maintained by the GStreamer project](https://gstreamer.freedesktop.org/data/pkg/windows/). They usually come in MSI installer format. You do not need the development installers. Naming of the runtime package follows the `gstreamer-1.0-<arch>-<version>.msi` convention.
 
 **Make sure you select COMPLETE installation and NOT typical.** If you go with typical, `ksvideosrc` plugin will not be available for you, and *livecam* will not be able to use it.
 
 After installation, make sure you have `GSTREAMER_1_0_ROOT_<arch>` environment variable defined in your system. This is a variable created by the MSI installer, pointing to where you installed the runtime package. You might need to restart your computer after installation for this variable to show up.
 
-### linux
+### Linux
+
 GStreamer might be already available on your machine. You may verify its existence by typing `gst-launch-1.0 --version` on your command line. If this command is not available, you can obtain GStreamer from your distro's package manager.
 
-### mac osx
-Obtain GStreamer runtime via [Homebrew](http://brew.sh/).
+### Mac OSX
 
-```bash
-brew install gstreamer gstreamermm gst-plugins-good gst-plugins-bad
+You may obtain GStreamer runtime via [Homebrew](http://brew.sh/).
+
+```
+$ brew install gstreamer         # install gstreamer
+$ brew install gst-plugins-good  # general plugins
+$ brew install gst-plugins-bad   # mac video sources etc.
 ```
 
-## usage
+## Usage
 
 ```JS
 // npm install livecam
@@ -40,7 +47,8 @@ webcam_server.broadcast();
 If all goes fine, you will see a message like this in your console:
 `Open http://127.0.0.1:11000/ in your browser!`.
 
-## configuration
+## Configuration
+
 `LiveCam ` takes an object in as its launch configuration:
 
 ```JS
@@ -117,5 +125,6 @@ That means you can hide *gst_tcp address* behind your firewall.
 var gst_video_src = 'filesrc location="C:\\\\videos\\\\stream.mp4"'
 ```
 
-## license
+## License
+
 [LGPL-v3.0](https://gstreamer.freedesktop.org/documentation/licensing.html).
