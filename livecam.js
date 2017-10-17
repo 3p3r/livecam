@@ -73,6 +73,12 @@ function GstLaunch() {
 					detected_path = bin;
 				} catch (e) { /* no-op */ }
 			}
+		} else if (OS.platform() == 'darwin') {
+			try {
+				var bin = '/usr/local/bin/gst-launch-1.0'
+				FS.accessSync(bin, FS.F_OK);
+				detected_path = bin;
+			} catch (e) { /* no-op */ }
 		}
 		
 		return detected_path;
@@ -153,7 +159,9 @@ function GstLiveCamServer(config) {
 	const Assert = require('assert');
 	const OS = require('os');
 	
-	Assert.ok(OS.platform() == 'win32' || OS.platform() == 'linux',
+	Assert.ok(OS.platform() == 'win32'
+	|| OS.platform() == 'linux'
+	|| OS.platform() == 'darwin',
 	"livecam module supports Windows and Linux for broadcasting.");
 	
 	config = config || {};
@@ -179,6 +187,10 @@ function GstLiveCamServer(config) {
 			gst_video_src = 'ksvideosrc ! decodebin';
 		else if (OS.platform() == 'linux')
 			gst_video_src = 'v4l2src ! decodebin';
+		else if (OS.platform() == 'darwin')
+			gst_video_src = 'avfvideosrc';
+			if(config.deviceIndex)
+				gst_video_src += ' device-index=' + config.deviceIndex;
 		else
 			gst_video_src = 'videotestsrc';
 	} else {
