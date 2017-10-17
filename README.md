@@ -21,11 +21,13 @@ GStreamer might be already available on your machine. You may verify its existen
 
 ### Mac OSX
 
-This module was never tested nor designed to run on Apple platforms, however if you wish to proceed with running it on an Apple platform, you may obtain GStreamer runtime via [Homebrew](http://brew.sh/).
+You may obtain GStreamer runtime via [Homebrew](http://brew.sh/).
 
-    $ brew install gstreamer 		 # install gstreamer
-    $ brew install gst-plugins-good  # general plugins
-    $ brew install gst-plugins-bad 	 # mac video sources etc.
+```
+$ brew install gstreamer         # install gstreamer
+$ brew install gst-plugins-good  # general plugins
+$ brew install gst-plugins-bad   # mac video sources etc.
+```
 
 ## Usage
 
@@ -94,7 +96,10 @@ const webcam_server = new LiveCam
 		
 		// framerate of the feed (default : 0)
 		// provide 0 to match webcam input
-		'framerate' : 25
+		'framerate' : 25,
+
+		// macos only: select the webcam via index
+		'deviceIndex' : 1
 	}
 });
 ```
