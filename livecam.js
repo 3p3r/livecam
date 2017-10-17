@@ -175,14 +175,17 @@ function GstLiveCamServer(config) {
 	var gst_video_src = '';
 	
 	if (!fake) {
-		if (OS.platform() == 'win32')
+		if (OS.platform() == 'win32') {
 			gst_video_src = 'ksvideosrc ! decodebin';
-		else if (OS.platform() == 'linux')
+		}
+		else if (OS.platform() == 'linux') {
 			gst_video_src = 'v4l2src ! decodebin';
+		}
 		else if (OS.platform() == 'darwin') {
 			gst_video_src = 'wrappercamerabinsrc mode=2  ! video/x-raw ! decodebin';
-		} else
+		} else {
 			gst_video_src = 'videotestsrc';
+		}
 	} else {
 		gst_video_src = 'videotestsrc';
 	}
