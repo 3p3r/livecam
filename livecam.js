@@ -174,6 +174,7 @@ function GstLiveCamServer(config) {
   const framerate = config.framerate || 30;
   const grayscale = config.grayscale || false;
   const deviceIndex = config.deviceIndex || -1;
+  const device = config.device || '/dev/video0';
 
   Assert.ok(typeof(fake), 'boolean');
   Assert.ok(typeof(width), 'number');
@@ -188,7 +189,7 @@ function GstLiveCamServer(config) {
     if (OS.platform() == 'win32')
       gst_video_src = 'ksvideosrc device-index=' + deviceIndex + ' ! decodebin';
     else if (OS.platform() == 'linux')
-      gst_video_src = 'v4l2src ! decodebin';
+      gst_video_src = 'v4l2src device=' + device + ' ! decodebin';
     else if (OS.platform() == 'darwin')
       gst_video_src = 'avfvideosrc device-index=' + deviceIndex;
     else

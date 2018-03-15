@@ -101,8 +101,10 @@ const webcam_server = new LiveCam
         // provide 0 to match webcam input
         'framerate' : 25,
 
-        // macos only: select the webcam via index
-        'deviceIndex' : 1
+        // win/osx only: select the webcam via index (default : -1 )
+        'deviceIndex' : 1,
+        // linux only: select the webcam via device (default : /dev/video0 )
+        'device' : '/dev/video0'
     }
 });
 ```
