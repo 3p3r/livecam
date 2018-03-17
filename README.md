@@ -57,7 +57,7 @@ If all goes fine, you will see a message like this in your console: `Open http:/
 ```javascript
 // npm install livecam
 
-const LiveCam = require('livecam');
+const LiveCam = require('livecam').LiveCam;
 const webcam_server = new LiveCam
 ({
     // address and port of the webcam UI
