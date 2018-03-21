@@ -57,7 +57,7 @@ If all goes fine, you will see a message like this in your console: `Open http:/
 ```javascript
 // npm install livecam
 
-const LiveCam = require('livecam');
+const LiveCam = require('livecam').LiveCam;
 const webcam_server = new LiveCam
 ({
     // address and port of the webcam UI
@@ -101,8 +101,10 @@ const webcam_server = new LiveCam
         // provide 0 to match webcam input
         'framerate' : 25,
 
-        // macos only: select the webcam via index
-        'deviceIndex' : 1
+        // win/osx only: select the webcam via index (default : -1 )
+        'deviceIndex' : 1,
+        // linux only: select the webcam via device (default : /dev/video0 )
+        'device' : '/dev/video0'
     }
 });
 ```

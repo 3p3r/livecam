@@ -155,7 +155,7 @@ function GstLaunch() {
 
 /*!
  * @class GstLiveCamServer
- * @brief Encapsulates a GStreamer pipeline to broadcast default webcam.
+ * @brief Encapsulates a GStreamer pipeline to broadcast webcam.
  */
 function GstLiveCamServer(config) {
 
@@ -174,6 +174,7 @@ function GstLiveCamServer(config) {
   const framerate = config.framerate || 30;
   const grayscale = config.grayscale || false;
   const deviceIndex = config.deviceIndex || -1;
+  const device = config.device || '/dev/video0';
 
   Assert.ok(typeof(fake), 'boolean');
   Assert.ok(typeof(width), 'number');
@@ -183,12 +184,13 @@ function GstLiveCamServer(config) {
 
   var gst_multipart_boundary = '--videoboundary';
   var gst_video_src = '';
+  var gst_process = null;
 
   if (!fake) {
     if (OS.platform() == 'win32')
       gst_video_src = 'ksvideosrc device-index=' + deviceIndex + ' ! decodebin';
     else if (OS.platform() == 'linux')
-      gst_video_src = 'v4l2src ! decodebin';
+      gst_video_src = 'v4l2src device=' + device + ' ! decodebin';
     else if (OS.platform() == 'darwin')
       gst_video_src = 'avfvideosrc device-index=' + deviceIndex;
     else
@@ -229,14 +231,21 @@ function GstLiveCamServer(config) {
       console.log('GStreamer version: ' + gst_launch.getVersion());
       console.log('GStreamer pipeline: ' + cam_pipeline);
 
-      return gst_launch.spawnPipeline(cam_pipeline);
+      gst_process = gst_launch.spawnPipeline(cam_pipeline);
+      return gst_process;
     } else {
       throw new Error('GstLaunch not found.');
     }
   }
 
+  function stop() {
+    if(gst_process) {
+      gst_process.kill();
+    }
+  }
   return {
-    'start': start
+    'start': start,
+    stop: stop
   }
 
 }
@@ -489,4 +498,7 @@ function LiveCam(config) {
 
 }
 
-module.exports = LiveCam;
+module.exports = {
+  LiveCam: LiveCam,
+  GstLiveCamServer: GstLiveCamServer
+};
