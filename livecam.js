@@ -414,8 +414,8 @@ function LiveCam(config) {
   config = config || {};
   Assert.ok(typeof(config), 'object');
 
-  const gst_tcp_addr = config.gst_addr || "127.0.0.1";
-  const gst_tcp_port = config.gst_port || 10000;
+  const gst_tcp_addr = config.gst_tcp_addr || "127.0.0.1";
+  const gst_tcp_port = config.gst_tcp_port || 10000;
   const ui_addr = config.ui_addr || "127.0.0.1";
   const ui_port = config.ui_port || 11000;
   const broadcast_addr = config.broadcast_addr || "127.0.0.1";
