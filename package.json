@@ -1,12 +1,12 @@
 {
   "name": "livecam",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Webcam live-streaming solution using GStreamer and Node.js",
   "license": "LGPL-3.0",
   "main": "livecam.js",
   "dependencies": {
     "dicer": "^0.2.5",
-    "socket.io": "^1.4.6"
+    "socket.io": "^2.1.1"
   },
   "repository": {
     "type": "git",
